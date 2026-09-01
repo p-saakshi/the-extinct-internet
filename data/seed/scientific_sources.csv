@@ -1,0 +1,17 @@
+id,title,authors,publication_year,publisher,url,doi,source_type
+S01,Tyrannosaurus rex,,,"Smithsonian Institution","https://www.si.edu/newsdesk/factsheets/tyrannosaurus-rex",,museum
+S02,Tyrannosaurus,,,"Natural History Museum London","https://www.nhm.ac.uk/discover/dino-directory/tyrannosaurus.html",,museum
+S03,"Dinosaur Census Reveals Abundant Tyrannosaurus and Rare Ontogenetic Stages in the Upper Cretaceous Hell Creek Formation (Maastrichtian), Montana, USA","Horner; Goodwin; Myhrvold",2011,PLoS ONE,"https://pmc.ncbi.nlm.nih.gov/articles/PMC3036655/",,journal
+S04,Physical evidence of predatory behavior in Tyrannosaurus rex,"DePalma et al.",2013,PNAS,"https://pmc.ncbi.nlm.nih.gov/articles/PMC3732924/",,journal
+S05,The Biomechanics Behind Extreme Osteophagy in Tyrannosaurus rex,"Paul M. Gignac; Gregory M. Erickson",2017,Scientific Reports,"https://www.nature.com/articles/s41598-017-02161-w",,journal
+S06,Cannibalism in Tyrannosaurus rex,"Nicholas R. Longrich et al.",2010,PLoS ONE,"https://pmc.ncbi.nlm.nih.gov/articles/PMC2955550/",,journal
+S07,Triceratops,,,"Natural History Museum London","https://www.nhm.ac.uk/discover/dino-directory/triceratops.html",,museum
+S08,Evolutionary trends in Triceratops from the Hell Creek Formation Montana,"Scannella et al.",2014,PNAS,"https://pmc.ncbi.nlm.nih.gov/articles/PMC4104892/",,journal
+S09,Edmontosaurus,,,"Natural History Museum London","https://www.nhm.ac.uk/discover/dino-directory/edmontosaurus.html",,museum
+S10,"Osteohistological and taphonomic life-history assessment of Edmontosaurus annectens from the Ruth Mason Dinosaur Quarry","Wosik et al.",2022,Peer-reviewed journal,"https://pmc.ncbi.nlm.nih.gov/articles/PMC9296034/",,journal
+S11,Ankylosaurus,,,"Natural History Museum London","https://www.nhm.ac.uk/discover/dino-directory/ankylosaurus.html",,museum
+S12,Estimating Impact Forces of Tail Club Strikes by Ankylosaurid Dinosaurs,"Victoria M. Arbour",2009,PLoS ONE,"https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0006738","10.1371/journal.pone.0006738",journal
+S13,Woolly Mammoth,,,"Smithsonian Institution","https://www.si.edu/object/woolly-mammoth:nmnheducation_13951472",,museum
+S14,Temporal genetic change in the last remaining population of woolly mammoth,,2010,Proceedings of the Royal Society B,"https://pmc.ncbi.nlm.nih.gov/articles/PMC2894910/",,journal
+S15,Holocene dwarf mammoths from Wrangel Island in the Siberian Arctic,"Vartanyan; Garutt; Sher",1993,Nature,"https://www.nature.com/articles/362337a0","10.1038/362337a0",journal
+S16,Collapse of the mammoth-steppe in central Yukon as revealed by ancient environmental DNA,,2021,Nature Communications,"https://www.nature.com/articles/s41467-021-27439-6",,journal

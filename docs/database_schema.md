@@ -1,8 +1,3 @@
-LMAO yes, that was supposed to be **one documentation file**, but I wrapped parts of it weirdly in chat so it looked cursed. Here's the clean version in **proper Markdown** --- you can paste this directly into:
-
-`docs/database_schema.md`
-
-```
 # The Extinct Internet --- V1 Database Schema
 
 ## Purpose
@@ -914,16 +909,3 @@ Conversations
 conversations
 messages
 ```
-
-* * * * *
-
-Schema Status
-=============
-
-**Status: LOCKED FOR V1**
-
-Changes should only be made if implementation reveals a genuine technical requirement.
-
-Do not restructure the database simply because a new future feature idea appears.
-
-Future features should preferably be added through new tables, new nullable relationships, or additive migrations.

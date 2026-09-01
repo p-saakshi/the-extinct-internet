@@ -1,0 +1,6 @@
+id,creature_id,kingdom,phylum,class,order_name,family,genus,species
+T01,C01,Animalia,Chordata,Reptilia,Saurischia,Tyrannosauridae,Tyrannosaurus,Tyrannosaurus rex
+T02,C02,Animalia,Chordata,Reptilia,Ornithischia,Ceratopsidae,Triceratops,
+T03,C03,Animalia,Chordata,Reptilia,Ornithischia,Hadrosauridae,Edmontosaurus,
+T04,C04,Animalia,Chordata,Reptilia,Ornithischia,Ankylosauridae,Ankylosaurus,Ankylosaurus magniventris
+T05,C05,Animalia,Chordata,Mammalia,Proboscidea,Elephantidae,Mammuthus,Mammuthus primigenius

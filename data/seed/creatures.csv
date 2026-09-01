@@ -1,0 +1,6 @@
+id,scientific_name,display_name,slug,taxon_rank,short_description,profile_image_url,is_active
+C01,Tyrannosaurus rex,T. rex,tyrannosaurus-rex,species,Large carnivorous theropod from the latest Cretaceous of western North America.,,true
+C02,Triceratops,Triceratops,triceratops,genus,Large horned herbivorous dinosaur from the latest Cretaceous of western North America.,,true
+C03,Edmontosaurus,Edmontosaurus,edmontosaurus,genus,Large hadrosaurid herbivore from the Late Cretaceous of western North America.,,true
+C04,Ankylosaurus magniventris,Ankylosaurus,ankylosaurus,species,Heavily armoured herbivorous dinosaur with a tail club from the latest Cretaceous.,,true
+C05,Mammuthus primigenius,Woolly mammoth,woolly-mammoth,species,Cold-adapted elephant relative that inhabited Pleistocene steppe-tundra environments.,,true

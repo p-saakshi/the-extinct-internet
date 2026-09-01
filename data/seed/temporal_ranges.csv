@@ -1,0 +1,6 @@
+id,creature_id,max_ma,min_ma,era,period,epoch,stage
+TR01,C01,68,66,Mesozoic,Cretaceous,Late Cretaceous,Maastrichtian
+TR02,C02,68,66,Mesozoic,Cretaceous,Late Cretaceous,Maastrichtian
+TR03,C03,73,66,Mesozoic,Cretaceous,Late Cretaceous,Campanian-Maastrichtian
+TR04,C04,68,66,Mesozoic,Cretaceous,Late Cretaceous,Maastrichtian
+TR05,C05,0.4,0.004,Cenozoic,Quaternary,Pleistocene-Holocene,

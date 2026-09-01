@@ -1,0 +1,10 @@
+id,name,location_type,modern_region,description
+L01,Hell Creek Formation,formation,"Montana; North Dakota; South Dakota; Wyoming, USA","Latest Cretaceous sedimentary formation of western North America and the main V1 ecosystem for T. rex, Triceratops, Edmontosaurus and Ankylosaurus."
+L02,Lance Formation,formation,"Wyoming, USA","Latest Cretaceous formation of western North America containing fauna closely related to the Hell Creek ecosystem."
+L03,Horseshoe Canyon Formation,formation,"Alberta, Canada","Late Cretaceous formation associated with older Edmontosaurus populations, especially Edmontosaurus regalis."
+L04,Western North America,region,"United States and Canada","Broad paleogeographic region inhabited by the four dinosaur accounts in V1."
+L05,Mammoth Steppe,ecosystem,"Northern Eurasia and northern North America","Cold, dry Pleistocene steppe-tundra biome dominated by grasses, sedges and herbaceous vegetation."
+L06,Beringia,region,"Siberia; Alaska; Yukon","Pleistocene land region connecting northeastern Asia and northwestern North America during periods of lower sea level."
+L07,Wrangel Island,island,"Chukotka, Russia","Arctic island where an isolated woolly mammoth population survived until roughly 4,000 years ago."
+L08,Siberia,region,"Russia","Major northern Eurasian region containing extensive woolly mammoth fossil and frozen remains."
+L09,Alaska,region,"United States","Major North American region inhabited by woolly mammoths during the Pleistocene."

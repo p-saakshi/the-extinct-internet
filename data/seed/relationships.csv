@@ -1,0 +1,4 @@
+id,subject_creature_id,object_creature_id,relationship_type,confidence,evidence_summary,source_id
+R01,C01,C03,possible_predator_prey,high,"Fossil evidence includes a Tyrannosaurus rex tooth embedded in healed hadrosaur vertebrae, demonstrating an attack on living prey closely comparable to Edmontosaurus annectens.",S04
+R02,C01,C02,possible_predator_prey,moderate,"Tyrannosaur bite traces and healed injuries on Triceratops remains support possible predator-prey interaction, although some feeding traces may represent scavenging rather than active predation.",S07
+R03,C01,C01,intraspecific_feeding,high,"Tyrannosaurus rex fossils preserve feeding traces attributed to other T. rex individuals, supporting cannibalistic feeding or scavenging of members of the same species.",S06

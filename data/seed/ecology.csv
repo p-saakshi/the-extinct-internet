@@ -1,0 +1,6 @@
+id,creature_id,diet,feeding_strategy,locomotion,length_min_m,length_max_m,mass_min_kg,mass_max_kg,habitat_summary
+E01,C01,carnivore,"Active predator and scavenger; capable of bone-crushing feeding",bipedal,11,13,7000,8500,"Warm, humid, vegetated floodplain and river environments of western North America"
+E02,C02,herbivore,"Browsing herbivore using a beak and shearing dental batteries",quadrupedal,8,9,6000,10000,"Warm, vegetated terrestrial floodplain and river-associated environments of western North America"
+E03,C03,herbivore,"Herbivore using a broad beak and extensive dental batteries to crop and process vegetation","facultative bipedal/quadrupedal",8,13,,,"Vegetated floodplains, coastal plains, river systems and other terrestrial environments of western North America"
+E04,C04,herbivore,"Primarily low-browsing herbivore",quadrupedal,6,8,,8000,"Vegetated terrestrial floodplain and river-associated environments of latest Cretaceous western North America"
+E05,C05,herbivore,"Grazing and browsing megaherbivore",quadrupedal,,,,,"Cold, dry grassland and steppe-tundra environments of northern Eurasia and North America"
