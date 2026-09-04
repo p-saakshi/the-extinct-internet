@@ -6,3 +6,12 @@
 .env.keys
 .env.local
 .env.*.local
+
+.env
+.env.*
+backend/.env
+backend/.venv/cd
+frontend/.env.local
+
+__pycache__/
+*.pyc
