@@ -2,6 +2,11 @@ from fastapi import FastAPI, HTTPException
 
 from bot_context import get_bot_context
 from bot_engine import build_bot_prompt, generate_bot_reply
+from conversation_memory import (
+    create_conversation,
+    get_conversation_messages,
+    save_message,
+)
 from supabase_client import supabase
 from world_logic import (
     classify_knowledge,
@@ -19,7 +24,13 @@ def health_check():
 
 @app.get("/creatures")
 def get_creatures():
-    response = supabase.table("creatures").select("*").execute()
+    response = (
+        supabase
+        .table("creatures")
+        .select("*")
+        .execute()
+    )
+
     return response.data
 
 
@@ -309,7 +320,10 @@ def get_specific_relationship_dynamic(
 
 
 @app.get("/world/compare/{slug_a}/{slug_b}")
-def compare_creatures(slug_a: str, slug_b: str):
+def compare_creatures(
+    slug_a: str,
+    slug_b: str,
+):
     creatures_response = (
         supabase
         .table("creatures")
@@ -416,7 +430,10 @@ def bot_context_test(slug: str):
 
 
 @app.get("/bot-test/{slug}")
-def bot_test(slug: str, message: str):
+def bot_test(
+    slug: str,
+    message: str,
+):
     return {
         "system_prompt": build_bot_prompt(slug),
         "user_message": message,
@@ -424,14 +441,72 @@ def bot_test(slug: str, message: str):
 
 
 @app.get("/chat/{slug}")
-def chat_with_creature(slug: str, message: str):
+def chat_with_creature(
+    slug: str,
+    message: str,
+    conversation_id: str,
+):
     reply = generate_bot_reply(
-        slug,
-        message,
+        slug=slug,
+        user_message=message,
+        conversation_id=conversation_id,
     )
 
     return {
         "creature": slug,
+        "conversation_id": conversation_id,
         "message": message,
         "reply": reply,
     }
+
+
+@app.post("/test/conversations/{slug}")
+def create_test_conversation(slug: str):
+    creature_response = (
+        supabase
+        .table("creatures")
+        .select("id, display_name, slug")
+        .eq("slug", slug)
+        .execute()
+    )
+
+    if not creature_response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Creature not found",
+        )
+
+    creature = creature_response.data[0]
+
+    conversation = create_conversation(
+        creature_id=creature["id"],
+    )
+
+    return {
+        "creature": creature,
+        "conversation": conversation,
+    }
+
+
+@app.post(
+    "/test/conversations/{conversation_id}/messages"
+)
+def save_test_message(
+    conversation_id: str,
+    sender_type: str,
+    content: str,
+):
+    return save_message(
+        conversation_id=conversation_id,
+        sender_type=sender_type,
+        content=content,
+    )
+
+
+@app.get(
+    "/test/conversations/{conversation_id}/messages"
+)
+def get_test_messages(conversation_id: str):
+    return get_conversation_messages(
+        conversation_id,
+    )

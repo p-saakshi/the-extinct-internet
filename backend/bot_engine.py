@@ -1,9 +1,13 @@
 import os
 
 from dotenv import load_dotenv
-from groq import Groq
+from groq import Groq, GroqError
 
 from bot_context import get_bot_context
+from conversation_memory import (
+    get_conversation_messages,
+    save_message,
+)
 
 load_dotenv()
 
@@ -102,21 +106,66 @@ Respond only as {creature["display_name"]}.
     return system_prompt
 
 
-def generate_bot_reply(slug: str, user_message: str):
+def generate_bot_reply(
+    slug: str,
+    user_message: str,
+    conversation_id: str,
+):
     system_prompt = build_bot_prompt(slug)
 
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt,
-            },
-            {
-                "role": "user",
-                "content": user_message,
-            },
-        ],
+    previous_messages = get_conversation_messages(
+        conversation_id=conversation_id,
+        limit=20,
     )
 
-    return response.choices[0].message.content
+    chat_messages = [
+        {
+            "role": "system",
+            "content": system_prompt,
+        }
+    ]
+
+    for message in previous_messages:
+        if message["sender_type"] == "human":
+            role = "user"
+        else:
+            role = "assistant"
+
+        chat_messages.append(
+            {
+                "role": role,
+                "content": message["content"],
+            }
+        )
+
+    chat_messages.append(
+        {
+            "role": "user",
+            "content": user_message,
+        }
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=chat_messages,
+        )
+
+        reply = response.choices[0].message.content
+
+    except GroqError:
+        reply = "This extinct user seems to be offline."
+
+    save_message(
+        conversation_id=conversation_id,
+        sender_type="human",
+        content=user_message,
+    )
+
+    save_message(
+        conversation_id=conversation_id,
+        sender_type="creature",
+        content=reply,
+    )
+
+    return reply
