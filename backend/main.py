@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+
 from supabase_client import supabase
 from world_logic import (
     classify_knowledge,
@@ -31,9 +32,13 @@ def get_creature(slug: str):
     )
 
     if not response.data:
-        raise HTTPException(status_code=404, detail="Creature not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Creature not found",
+        )
 
     return response.data[0]
+
 
 @app.get("/creatures/{slug}/profile")
 def get_creature_profile(slug: str):
@@ -46,7 +51,10 @@ def get_creature_profile(slug: str):
     )
 
     if not creature_response.data:
-        raise HTTPException(status_code=404, detail="Creature not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Creature not found",
+        )
 
     creature = creature_response.data[0]
     creature_id = creature["id"]
@@ -94,6 +102,8 @@ def get_creature_profile(slug: str):
         "ecology": ecology[0] if ecology else None,
         "locations": creature_locations,
     }
+
+
 @app.get("/creatures/{slug}/relationships")
 def get_creature_relationships(slug: str):
     creature_response = (
@@ -105,7 +115,10 @@ def get_creature_relationships(slug: str):
     )
 
     if not creature_response.data:
-        raise HTTPException(status_code=404, detail="Creature not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Creature not found",
+        )
 
     creature = creature_response.data[0]
     creature_id = creature["id"]
@@ -115,8 +128,10 @@ def get_creature_relationships(slug: str):
         .table("relationships")
         .select(
             "*, "
-            "subject:creatures!relationships_subject_creature_id_fkey(id, display_name, slug), "
-            "object:creatures!relationships_object_creature_id_fkey(id, display_name, slug), "
+            "subject:creatures!relationships_subject_creature_id_fkey"
+            "(id, display_name, slug), "
+            "object:creatures!relationships_object_creature_id_fkey"
+            "(id, display_name, slug), "
             "source:scientific_sources(id, title, url, doi)"
         )
         .eq("subject_creature_id", creature_id)
@@ -129,8 +144,10 @@ def get_creature_relationships(slug: str):
         .table("relationships")
         .select(
             "*, "
-            "subject:creatures!relationships_subject_creature_id_fkey(id, display_name, slug), "
-            "object:creatures!relationships_object_creature_id_fkey(id, display_name, slug), "
+            "subject:creatures!relationships_subject_creature_id_fkey"
+            "(id, display_name, slug), "
+            "object:creatures!relationships_object_creature_id_fkey"
+            "(id, display_name, slug), "
             "source:scientific_sources(id, title, url, doi)"
         )
         .eq("object_creature_id", creature_id)
@@ -150,6 +167,45 @@ def get_creature_relationships(slug: str):
         "creature": creature,
         "relationships": relationships,
     }
+
+
+@app.get("/creatures/{slug}/persona")
+def get_creature_persona(slug: str):
+    creature_response = (
+        supabase
+        .table("creatures")
+        .select("id, scientific_name, display_name, slug")
+        .eq("slug", slug)
+        .execute()
+    )
+
+    if not creature_response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Creature not found",
+        )
+
+    creature = creature_response.data[0]
+
+    persona_response = (
+        supabase
+        .table("personas")
+        .select("*")
+        .eq("creature_id", creature["id"])
+        .execute()
+    )
+
+    if not persona_response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Persona not found",
+        )
+
+    return {
+        "creature": creature,
+        "persona": persona_response.data[0],
+    }
+
 
 @app.get("/world/compare/{slug_a}/{slug_b}")
 def compare_creatures(slug_a: str, slug_b: str):
@@ -238,4 +294,92 @@ def compare_creatures(slug_a: str, slug_b: str):
         "temporal_overlap": overlaps,
         "shared_locations": shared_locations,
         "knowledge_class": knowledge_class,
+    }
+@app.get("/creatures/{slug}/relationship-dynamics")
+def get_relationship_dynamics(slug: str):
+    creature_response = (
+        supabase
+        .table("creatures")
+        .select("id, scientific_name, display_name, slug")
+        .eq("slug", slug)
+        .execute()
+    )
+
+    if not creature_response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Creature not found",
+        )
+
+    creature = creature_response.data[0]
+    creature_id = creature["id"]
+
+    dynamics_response = (
+        supabase
+        .table("creature_relationship_dynamics")
+        .select(
+            "*, "
+            "object:creatures!creature_relationship_dynamics_object_creature_id_fkey"
+            "(id, display_name, slug)"
+        )
+        .eq("subject_creature_id", creature_id)
+        .execute()
+    )
+
+    return {
+        "creature": creature,
+        "relationship_dynamics": dynamics_response.data,
+    }
+@app.get("/creatures/{subject_slug}/relationship-dynamics/{object_slug}")
+def get_specific_relationship_dynamic(
+    subject_slug: str,
+    object_slug: str,
+):
+    creatures_response = (
+        supabase
+        .table("creatures")
+        .select("id, scientific_name, display_name, slug")
+        .in_("slug", [subject_slug, object_slug])
+        .execute()
+    )
+
+    creatures = {
+        creature["slug"]: creature
+        for creature in creatures_response.data
+    }
+
+    if subject_slug not in creatures:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Creature not found: {subject_slug}",
+        )
+
+    if object_slug not in creatures:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Creature not found: {object_slug}",
+        )
+
+    subject = creatures[subject_slug]
+    object_creature = creatures[object_slug]
+
+    relationship_response = (
+        supabase
+        .table("creature_relationship_dynamics")
+        .select("*")
+        .eq("subject_creature_id", subject["id"])
+        .eq("object_creature_id", object_creature["id"])
+        .execute()
+    )
+
+    if not relationship_response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Relationship dynamic not found",
+        )
+
+    return {
+        "subject": subject,
+        "object": object_creature,
+        "relationship_dynamic": relationship_response.data[0],
     }
