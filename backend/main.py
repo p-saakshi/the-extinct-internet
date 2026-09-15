@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 
+from bot_context import get_bot_context
+from bot_engine import build_bot_prompt, generate_bot_reply
 from supabase_client import supabase
 from world_logic import (
     classify_knowledge,
@@ -157,11 +159,15 @@ def get_creature_relationships(slug: str):
 
     relationships = subject_relationships.copy()
 
+    existing_ids = {
+        relationship["id"]
+        for relationship in relationships
+    }
+
     for relationship in object_relationships:
-        if relationship["id"] not in {
-            existing["id"] for existing in relationships
-        }:
+        if relationship["id"] not in existing_ids:
             relationships.append(relationship)
+            existing_ids.add(relationship["id"])
 
     return {
         "creature": creature,
@@ -207,94 +213,6 @@ def get_creature_persona(slug: str):
     }
 
 
-@app.get("/world/compare/{slug_a}/{slug_b}")
-def compare_creatures(slug_a: str, slug_b: str):
-    creatures_response = (
-        supabase
-        .table("creatures")
-        .select("id, display_name, slug")
-        .in_("slug", [slug_a, slug_b])
-        .execute()
-    )
-
-    creatures = {
-        creature["slug"]: creature
-        for creature in creatures_response.data
-    }
-
-    if slug_a not in creatures:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Creature not found: {slug_a}",
-        )
-
-    if slug_b not in creatures:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Creature not found: {slug_b}",
-        )
-
-    creature_a = creatures[slug_a]
-    creature_b = creatures[slug_b]
-
-    range_a_response = (
-        supabase
-        .table("temporal_ranges")
-        .select("*")
-        .eq("creature_id", creature_a["id"])
-        .execute()
-        .data
-    )
-
-    range_b_response = (
-        supabase
-        .table("temporal_ranges")
-        .select("*")
-        .eq("creature_id", creature_b["id"])
-        .execute()
-        .data
-    )
-
-    range_a = range_a_response[0] if range_a_response else None
-    range_b = range_b_response[0] if range_b_response else None
-
-    locations_a = (
-        supabase
-        .table("creature_locations")
-        .select("*, locations(*)")
-        .eq("creature_id", creature_a["id"])
-        .execute()
-        .data
-    )
-
-    locations_b = (
-        supabase
-        .table("creature_locations")
-        .select("*, locations(*)")
-        .eq("creature_id", creature_b["id"])
-        .execute()
-        .data
-    )
-
-    overlaps = temporal_overlap(range_a, range_b)
-
-    shared_locations = get_shared_locations(
-        locations_a,
-        locations_b,
-    )
-
-    knowledge_class = classify_knowledge(
-        overlaps,
-        shared_locations,
-    )
-
-    return {
-        "creature_a": creature_a,
-        "creature_b": creature_b,
-        "temporal_overlap": overlaps,
-        "shared_locations": shared_locations,
-        "knowledge_class": knowledge_class,
-    }
 @app.get("/creatures/{slug}/relationship-dynamics")
 def get_relationship_dynamics(slug: str):
     creature_response = (
@@ -319,7 +237,8 @@ def get_relationship_dynamics(slug: str):
         .table("creature_relationship_dynamics")
         .select(
             "*, "
-            "object:creatures!creature_relationship_dynamics_object_creature_id_fkey"
+            "object:creatures!"
+            "creature_relationship_dynamics_object_creature_id_fkey"
             "(id, display_name, slug)"
         )
         .eq("subject_creature_id", creature_id)
@@ -330,7 +249,11 @@ def get_relationship_dynamics(slug: str):
         "creature": creature,
         "relationship_dynamics": dynamics_response.data,
     }
-@app.get("/creatures/{subject_slug}/relationship-dynamics/{object_slug}")
+
+
+@app.get(
+    "/creatures/{subject_slug}/relationship-dynamics/{object_slug}"
+)
 def get_specific_relationship_dynamic(
     subject_slug: str,
     object_slug: str,
@@ -382,4 +305,133 @@ def get_specific_relationship_dynamic(
         "subject": subject,
         "object": object_creature,
         "relationship_dynamic": relationship_response.data[0],
+    }
+
+
+@app.get("/world/compare/{slug_a}/{slug_b}")
+def compare_creatures(slug_a: str, slug_b: str):
+    creatures_response = (
+        supabase
+        .table("creatures")
+        .select("id, display_name, slug")
+        .in_("slug", [slug_a, slug_b])
+        .execute()
+    )
+
+    creatures = {
+        creature["slug"]: creature
+        for creature in creatures_response.data
+    }
+
+    if slug_a not in creatures:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Creature not found: {slug_a}",
+        )
+
+    if slug_b not in creatures:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Creature not found: {slug_b}",
+        )
+
+    creature_a = creatures[slug_a]
+    creature_b = creatures[slug_b]
+
+    range_a_response = (
+        supabase
+        .table("temporal_ranges")
+        .select("*")
+        .eq("creature_id", creature_a["id"])
+        .execute()
+        .data
+    )
+
+    range_b_response = (
+        supabase
+        .table("temporal_ranges")
+        .select("*")
+        .eq("creature_id", creature_b["id"])
+        .execute()
+        .data
+    )
+
+    range_a = (
+        range_a_response[0]
+        if range_a_response
+        else None
+    )
+
+    range_b = (
+        range_b_response[0]
+        if range_b_response
+        else None
+    )
+
+    locations_a = (
+        supabase
+        .table("creature_locations")
+        .select("*, locations(*)")
+        .eq("creature_id", creature_a["id"])
+        .execute()
+        .data
+    )
+
+    locations_b = (
+        supabase
+        .table("creature_locations")
+        .select("*, locations(*)")
+        .eq("creature_id", creature_b["id"])
+        .execute()
+        .data
+    )
+
+    overlaps = temporal_overlap(
+        range_a,
+        range_b,
+    )
+
+    shared_locations = get_shared_locations(
+        locations_a,
+        locations_b,
+    )
+
+    knowledge_class = classify_knowledge(
+        overlaps,
+        shared_locations,
+    )
+
+    return {
+        "creature_a": creature_a,
+        "creature_b": creature_b,
+        "temporal_overlap": overlaps,
+        "shared_locations": shared_locations,
+        "knowledge_class": knowledge_class,
+    }
+
+
+@app.get("/bot-context/{slug}")
+def bot_context_test(slug: str):
+    return get_bot_context(slug)
+
+
+@app.get("/bot-test/{slug}")
+def bot_test(slug: str, message: str):
+    return {
+        "system_prompt": build_bot_prompt(slug),
+        "user_message": message,
+    }
+
+
+@app.get("/chat/{slug}")
+def chat_with_creature(slug: str, message: str):
+    reply = generate_bot_reply(
+        slug,
+        message,
+    )
+
+    return {
+        "creature": slug,
+        "message": message,
+        "reply": reply,
     }
